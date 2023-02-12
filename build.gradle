@@ -1,0 +1,70 @@
+plugins {
+    id 'java'
+    id "io.freefair.lombok" version "6.0.0-m2"
+    id 'io.qameta.allure' version '2.10.0'
+
+}
+
+def
+        junitVersion = "5.8.2",
+        slf4jVersion = "1.7.32",
+        allureVersion = "2.19.0",
+        assertJVersion = "3.23.1",
+        selenideVersion = "6.6.6",
+        ownerVersion = "1.0.4"
+
+allure {
+    report {
+        version.set(allureVersion)
+    }
+    adapter { // отвечает за появление папочки build/allure-results
+        aspectjWeaver.set(true) //обработка аннотации @Step
+        frameworks {
+            junit5 { //название фреймворка
+                adapterVersion.set(allureVersion) //версия интеграции фреймворка и Allure
+            }
+        }
+    }
+}
+
+group 'ru.alfabank'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation (
+            "com.codeborne:selenide:$selenideVersion",
+            "org.aeonbits.owner:owner:$ownerVersion",
+            "org.junit.jupiter:junit-jupiter:$junitVersion",
+            "org.slf4j:slf4j-simple:$slf4jVersion",
+            "io.qameta.allure:allure-selenide:$allureVersion",
+            "org.assertj:assertj-core:$assertJVersion",
+            "io.qameta.allure:allure-rest-assured:$allureVersion",
+
+    )
+
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
+tasks.withType(Test) {
+    systemProperties(System.getProperties())
+    useJUnitPlatform()
+
+    testLogging {
+        lifecycle {
+            events "started", "skipped", "failed", "standard_error", "standard_out"
+            exceptionFormat "short"
+        }
+    }
+}
+task WebTests(type: Test) {
+    useJUnitPlatform{
+        includeTags "webtests"
+    }
+}
