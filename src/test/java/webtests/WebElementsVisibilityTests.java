@@ -9,7 +9,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 import static com.codeborne.selenide.Selenide.*;
 
-public class WebElementsVisibility extends BaseTest {
+public class WebElementsVisibilityTests extends BaseTest {
 
     @ValueSource(strings = {
             "Карты",
